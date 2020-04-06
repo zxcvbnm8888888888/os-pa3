@@ -116,11 +116,13 @@ __RETURN VALUE__
 
 ### 2. Form process groups
 
-You need to assign the same PGID to all the processes created for the given shell command. As mentioned before, there are two cases to consider: (1) when a process forks more than one processes, and (2) when the shell creates multiple processes to implement pipes and a list of commands. For this, you need to modify the shell in ``./user/sh.c``. 
+You need to assign the same PGID to all the processes created for the given shell command. As mentioned before, there are two cases to consider: (1) when a process forks more than one processes, and (2) when the shell creates multiple processes to support pipes and/or a list of commands. For this, you need to modify the shell in ``./user/sh.c``. 
 
 ### 3. Make ``ctrl-c`` work
 
-Finally, you need to terminate all the processes belonging to the foreground process group when the ``ctrl-c`` key is pressed by a user. When a key is pressed, it is handled by the kernel's ``consoleintr()`` function in ``./kernel/console.c``. It will be helpful if you see how the list of processes is shown when the ``ctrl-p`` is pressed.
+Finally, you need to terminate all the processes belonging to the foreground process group when the ``ctrl-c`` key is pressed by a user. Terminating the foreground process group on ``ctrl-c`` should be done by the kernel, not by the shell. To do this, you have to devise a way for the kernel to track the PGID of the current foreground process group. 
+
+When a key is pressed, it is handled by the kernel's ``consoleintr()`` function in ``./kernel/console.c``. It will be helpful if you see how the list of processes is shown when the ``ctrl-p`` is pressed. 
 
 ## Skeleton code
 
@@ -132,7 +134,9 @@ $ git pull
 $ git checkout pa2
 ```
 
-If you run the ``ls`` command after booting ``xv6``, you can see that two programs ``infloop`` and ``fork10`` are available as shown below.
+Remember you still need to work on the branch ``pa2`` so that your previous implementations of ``setpgid()`` and ``getpgid()`` system calls can be reused for this project.
+
+Now if you run the ``ls`` command after booting ``xv6``, you can see that two programs ``infloop`` and ``fork10`` are available as shown below.
 ```
 $ make qemu
 qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 3G -smp 3 -nographic -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
@@ -270,14 +274,16 @@ $ ^p
 2 1 sleep  sh
 ```
 
-The last example (``$ kill -22``) shows that once you implement the ``kill()`` system call as required in this project, it can be also used to kill the backgroud processes using the PGID.
+The last example (``$ kill -22``) shows that once you implement the ``kill()`` system call as required in this project, it can be also used to kill the backgroud process group using the PGID.
 
 ## Restrictions
 
 * Do not add any system calls other than ``setpgid()`` and ``getpgid()`` implemented in the previous project.
+* You only need to modify ``Makefile``, files in the ``./kernel`` directory, and the shell in ``./user/sh.c``. Changes to other source code will be ignored during grading.
 
 ## Hand in instructions
 
+* Please remove all the debugging outputs before you submit. 
 * To submit your code, please run ``make submit`` in the ``xv6-riscv-snu`` directory. It will create a file named ``xv6-PA3-STUDENTID.tar.gz`` file in the parent directory. Please upload the file to the server.
 * By default, the ``sys.snu.ac.kr`` server is only accessible from the SNU campus network. If you want to access the server outside of the SNU campus, please send a mail to the TA.
 
