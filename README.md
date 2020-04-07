@@ -12,7 +12,7 @@
 
 A __foreground process__ means a process that is currently interacting with a user. If you run a program in the shell prompt, the corresponding process is the foreground process taking inputs from and/or displaying outputs to your terminal. The shell waits for the completion of such a foreground process by using the ``wait()`` system call. 
 
-You can create a __background process__ as well by appending ``&`` at the end of your command in the shell prompt. Such background processes are run independently without interacting with a user. The shell does not wait for the completion of the background process; the shell simply creates the background process and then take the next input from the user immediately. The following example shows how to run the ``ls`` process in the background on ``xv6``.
+You can create a __background process__ as well by appending ``&`` at the end of your command in the shell prompt. Such background processes are run independently without interacting with a user. The shell does not wait for the completion of the background process; the shell simply creates the background process and then takes the next input from the user immediately. The following example shows how to run the ``ls`` process in the background on ``xv6``.
 
 ```
 $ ls &
