@@ -116,7 +116,9 @@ __RETURN VALUE__
 
 ### 2. Form process groups
 
-You need to assign the same PGID to all the processes created for the given shell command. As mentioned before, there are two cases to consider: (1) when a process forks more than one processes, and (2) when the shell creates multiple processes to support pipes and/or a list of commands. For this, you need to modify the shell in ``./user/sh.c``. 
+You need to assign the same PGID to all the processes created for the given shell command. As mentioned before, there are two cases to consider: (1) when a process forks more than one processes, and (2) when the shell creates multiple processes to support pipes and/or a list of commands. 
+
+Please set the PGID of a process group to the same as the PID of the process group leader (the process in the root of the process group hierarchy). In this way, you can make the PGID unique among process groups. For this, you need to modify the shell in ``./user/sh.c``. 
 
 ### 3. Make ``ctrl-c`` work
 
